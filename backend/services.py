@@ -26,10 +26,9 @@ def obtener_ligas():
     url = f"{BASE_URL}/leagues"
     try:
         headers = _get_headers()
-        response = requests.get(url, headers=headers, timeout=15)
+        response = requests.get(url, headers=headers, timeout=30)
         if response.status_code == 200:
             return response.json()
-        # Log the failure details so we can see them in Render logs
         print(f"obtener_ligas: HTTP {response.status_code} - {response.text[:200]}", flush=True)
         return {}
     except Exception as e:
