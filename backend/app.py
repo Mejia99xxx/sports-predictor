@@ -148,7 +148,53 @@ def predecir_equipos():
 # =============================
 @app.route('/ligas')
 def ligas():
-    return jsonify(obtener_ligas())
+    """
+    Returns a hardcoded list of popular leagues.
+    The API-Football free plan blocks requests from cloud servers,
+    so we use a static list to ensure the dropdown always works.
+    """
+    ligas_data = [
+        # Mundial y selecciones
+        {"league": {"id": 1,   "name": "World Cup"},             "country": {"name": "World"}},
+        {"league": {"id": 4,   "name": "Euro Championship"},     "country": {"name": "Europe"}},
+        {"league": {"id": 5,   "name": "UEFA Nations League"},   "country": {"name": "Europe"}},
+        {"league": {"id": 9,   "name": "Copa América"},          "country": {"name": "South America"}},
+        {"league": {"id": 29,  "name": "AFC Asian Cup"},         "country": {"name": "Asia"}},
+        {"league": {"id": 6,   "name": "Africa Cup of Nations"}, "country": {"name": "Africa"}},
+        {"league": {"id": 34,  "name": "WC Qualification CONMEBOL"}, "country": {"name": "South America"}},
+        # Europa - Top 5 ligas
+        {"league": {"id": 39,  "name": "Premier League"},        "country": {"name": "England"}},
+        {"league": {"id": 140, "name": "La Liga"},               "country": {"name": "Spain"}},
+        {"league": {"id": 78,  "name": "Bundesliga"},            "country": {"name": "Germany"}},
+        {"league": {"id": 135, "name": "Serie A"},               "country": {"name": "Italy"}},
+        {"league": {"id": 61,  "name": "Ligue 1"},               "country": {"name": "France"}},
+        # Europa - Otras ligas
+        {"league": {"id": 2,   "name": "UEFA Champions League"}, "country": {"name": "Europe"}},
+        {"league": {"id": 3,   "name": "UEFA Europa League"},    "country": {"name": "Europe"}},
+        {"league": {"id": 848, "name": "UEFA Conference League"},"country": {"name": "Europe"}},
+        {"league": {"id": 88,  "name": "Eredivisie"},            "country": {"name": "Netherlands"}},
+        {"league": {"id": 94,  "name": "Primeira Liga"},         "country": {"name": "Portugal"}},
+        {"league": {"id": 144, "name": "Pro League"},            "country": {"name": "Belgium"}},
+        {"league": {"id": 103, "name": "Eliteserien"},           "country": {"name": "Norway"}},
+        {"league": {"id": 113, "name": "Allsvenskan"},           "country": {"name": "Sweden"}},
+        {"league": {"id": 119, "name": "Superliga"},             "country": {"name": "Denmark"}},
+        # América
+        {"league": {"id": 71,  "name": "Série A"},               "country": {"name": "Brazil"}},
+        {"league": {"id": 128, "name": "Liga Profesional"},      "country": {"name": "Argentina"}},
+        {"league": {"id": 262, "name": "Liga MX"},               "country": {"name": "Mexico"}},
+        {"league": {"id": 239, "name": "Primera División"},      "country": {"name": "Colombia"}},
+        {"league": {"id": 265, "name": "Primera División"},      "country": {"name": "Chile"}},
+        {"league": {"id": 268, "name": "Primera División"},      "country": {"name": "Peru"}},
+        {"league": {"id": 255, "name": "MLS"},                   "country": {"name": "USA"}},
+        # CONMEBOL competiciones
+        {"league": {"id": 13,  "name": "Copa Libertadores"},     "country": {"name": "South America"}},
+        {"league": {"id": 11,  "name": "Copa Sudamericana"},     "country": {"name": "South America"}},
+        # Asia / Resto
+        {"league": {"id": 169, "name": "K League 1"},            "country": {"name": "South Korea"}},
+        {"league": {"id": 98,  "name": "J1 League"},             "country": {"name": "Japan"}},
+        {"league": {"id": 307, "name": "Saudi Pro League"},      "country": {"name": "Saudi Arabia"}},
+    ]
+    return jsonify({"response": ligas_data})
 
 @app.route('/equipos')
 def equipos():
