@@ -37,14 +37,8 @@ def index():
 # Ruta principal web (frontend)
 @app.route('/inicio')
 def inicio():
-    try:
-        data = obtener_ligas()
-        ligas = data.get("response", []) if isinstance(data, dict) else []
-        app.logger.info(f"Ligas cargadas: {len(ligas)}")
-    except Exception as e:
-        app.logger.error(f"Error cargando ligas: {e}")
-        ligas = []
-    return render_template("index.html", ligas=ligas)
+    # Ligas now loaded client-side via /ligas endpoint to avoid slow server-side API calls
+    return render_template("index.html")
 
 @app.route("/partidos")
 def mostrar_partidos():
