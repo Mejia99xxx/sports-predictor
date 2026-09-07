@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Resultado del Pronóstico</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <h1>Resultado del Pronóstico</h1>
+  {% if equipo_local and equipo_visitante %}
+  <p>{{ equipo_local }} vs {{ equipo_visitante }}</p>
+  {% endif %}
+  <p>El modelo predice: <strong>{{ resultado }}</strong></p>
+  <a href="/partidos">Volver a partidos</a>
+</body>
+</html>

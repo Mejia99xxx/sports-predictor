@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Partidos del Día</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <h1>Partidos de Hoy</h1>
+  {% if partidos %}
+    <ul>
+    {% for p in partidos %}
+      <li>
+        {{ p.teams.home.name }} vs {{ p.teams.away.name }} - {{ p.fixture.date }}
+        <form method="POST" action="/predecir">
+          <input type="hidden" name="fixture_id" value="{{ p.fixture.id }}">
+          <button type="submit">Predecir</button>
+        </form>
+      </li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>No hay partidos para hoy.</p>
+  {% endif %}
+</body>
+</html>

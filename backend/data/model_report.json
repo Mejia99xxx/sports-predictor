@@ -1,0 +1,60 @@
+{
+  "nombre_algoritmo": "RandomForestClassifier",
+  "accuracy_test": 0.9230769230769231,
+  "accuracy_cv_media": 0.9791666666666666,
+  "accuracy_cv_std": 0.01701034543599428,
+  "hiperparametros": {
+    "max_depth": null,
+    "min_samples_split": 2,
+    "n_estimators": 200
+  },
+  "fecha_hora": "2026-08-29T07:04:08",
+  "filas_entrenamiento": 48,
+  "filas_prueba": 13,
+  "precision_por_clase": {
+    "-1": 1.0,
+    "0": 0.8,
+    "1": 1.0
+  },
+  "recall_por_clase": {
+    "-1": 0.75,
+    "0": 1.0,
+    "1": 1.0
+  },
+  "f1_por_clase": {
+    "-1": 0.8571428571428571,
+    "0": 0.8888888888888888,
+    "1": 1.0
+  },
+  "matriz_confusion": [
+    [
+      3,
+      1,
+      0
+    ],
+    [
+      0,
+      4,
+      0
+    ],
+    [
+      0,
+      0,
+      5
+    ]
+  ],
+  "algoritmos_evaluados": [
+    {
+      "nombre": "RandomForestClassifier",
+      "accuracy_cv_media": 0.9791666666666666
+    },
+    {
+      "nombre": "GradientBoostingClassifier",
+      "accuracy_cv_media": 0.9583333333333334
+    },
+    {
+      "nombre": "LogisticRegression",
+      "accuracy_cv_media": 0.9375
+    }
+  ]
+}

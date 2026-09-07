@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# Environment variables (secrets)
+backend/.env
+.env
+
+# Database
+*.db
+*.sqlite3
+
+# ML model backups
+backend/modelo_backup_*.pkl
+
+# Raw downloaded data (can be regenerated)
+backend/data/raw/
+
+# Test cache
+.pytest_cache/
+.coverage
+htmlcov/
+.hypothesis/
+backend/.hypothesis/
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kiro
+.kiro/

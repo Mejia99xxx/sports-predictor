@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pronosticador de Futbol</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    select {
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+      font-size: 0.95rem;
+    }
+    select:disabled {
+      background-color: #f0f0f0;
+      color: #999;
+      cursor: not-allowed;
+    }
+    .nav-link {
+      display: inline-block;
+      margin-top: 1rem;
+      color: #007bff;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .nav-link:hover {
+      text-decoration: underline;
+    }
+    .error-message {
+      color: #c0392b;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    #team-error {
+      color: #c0392b;
+      font-size: 0.85rem;
+      margin-top: 0.3rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Pronosticador de Futbol</h1>
+
+    {% if not ligas %}
+      <p class="error-message">No se pudieron cargar las ligas. Intenta de nuevo mas tarde.</p>
+    {% endif %}
+
+    <form method="POST" action="/predecir/equipos">
+      <input type="hidden" name="local_team_name" id="local_team_name" value="">
+      <input type="hidden" name="visitante_team_name" id="visitante_team_name" value="">
+
+      <label for="liga_id">Liga:</label>
+      <select id="liga_id" name="liga_id">
+        <option value="">-- Selecciona una liga --</option>
+        {% for liga in ligas %}
+          <option value="{{ liga.league.id }}">{{ liga.league.name }} ({{ liga.country.name }})</option>
+        {% endfor %}
+      </select>
+
+      <div id="team-error"></div>
+
+      <label for="local_team_id">Equipo Local:</label>
+      <select id="local_team_id" name="local_team_id" disabled>
+        <option value="">-- Selecciona una liga primero --</option>
+      </select>
+
+      <label for="visitante_team_id">Equipo Visitante:</label>
+      <select id="visitante_team_id" name="visitante_team_id" disabled>
+        <option value="">-- Selecciona una liga primero --</option>
+      </select>
+
+      <button type="submit">Predecir</button>
+    </form>
+
+    <a class="nav-link" href="/partidos">Ver partidos del dia</a>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
