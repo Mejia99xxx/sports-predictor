@@ -40,7 +40,9 @@ def inicio():
     try:
         data = obtener_ligas()
         ligas = data.get("response", []) if isinstance(data, dict) else []
-    except Exception:
+        app.logger.info(f"Ligas cargadas: {len(ligas)}")
+    except Exception as e:
+        app.logger.error(f"Error cargando ligas: {e}")
         ligas = []
     return render_template("index.html", ligas=ligas)
 

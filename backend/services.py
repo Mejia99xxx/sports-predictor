@@ -24,10 +24,17 @@ def obtener_partidos_del_dia():
 
 def obtener_ligas():
     url = f"{BASE_URL}/leagues"
-    response = requests.get(url, headers=_get_headers())
-    if response.status_code == 200:
-        return response.json()
-    return {}
+    try:
+        headers = _get_headers()
+        response = requests.get(url, headers=headers, timeout=15)
+        if response.status_code == 200:
+            return response.json()
+        # Log the failure details so we can see them in Render logs
+        print(f"obtener_ligas: HTTP {response.status_code} - {response.text[:200]}", flush=True)
+        return {}
+    except Exception as e:
+        print(f"obtener_ligas: Exception - {e}", flush=True)
+        return {}
 
 
 def _temporadas_disponibles(league_id: int) -> list:
