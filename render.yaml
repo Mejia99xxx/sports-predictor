@@ -2,11 +2,11 @@ services:
   - type: web
     name: sports-predictor
     runtime: python
+    rootDir: backend
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: gunicorn app:app --workers 2 --timeout 120
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
       - key: API_FOOTBALL_KEY
         sync: false
-    rootDir: backend
