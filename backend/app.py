@@ -37,13 +37,20 @@ def index():
 # Ruta principal web (frontend)
 @app.route('/inicio')
 def inicio():
-    # Ligas now loaded client-side via /ligas endpoint to avoid slow server-side API calls
     return render_template("index.html")
 
 @app.route("/partidos")
 def mostrar_partidos():
-    partidos = obtener_partidos_del_dia()
-    return render_template("partidos.html", partidos=partidos)
+    # Partidos now loaded client-side — pass empty list as default
+    return render_template("partidos.html", partidos=[])
+
+@app.route("/api-config")
+def api_config():
+    """Expose API key to frontend so it can call API-Football directly."""
+    return jsonify({
+        "api_key": os.environ.get("API_FOOTBALL_KEY", "3a5f469c7cb18934b76eb4818ed42a9a"),
+        "base_url": "https://v3.football.api-sports.io"
+    })
 
 modelo, scaler = None, None
 try:
@@ -85,7 +92,35 @@ def predecir():
 
 
 
-@app.route("/predecir/equipos", methods=["POST"])
+@app.route("/predecir/vector", methods=["POST"])
+def predecir_vector():
+    """
+    Receives a pre-computed prediction vector from the frontend
+    (after it fetched stats directly from API-Football) and returns prediction.
+    """
+    if modelo is None or scaler is None:
+        return jsonify({"error": "El modelo no está disponible."}), 503
+
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Se requiere JSON con el vector."}), 400
+
+    vector = data.get("vector")
+    equipo_local = data.get("equipo_local", "Local")
+    equipo_visitante = data.get("equipo_visitante", "Visitante")
+
+    if not vector or len(vector) != 9:
+        return jsonify({"error": "El vector debe tener exactamente 9 valores."}), 400
+
+    try:
+        resultado = predecir_modelo(modelo, scaler, vector)
+        return jsonify({
+            "resultado": resultado,
+            "equipo_local": equipo_local,
+            "equipo_visitante": equipo_visitante
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 def predecir_equipos():
     # 1. Validate required parameters
     local_team_id = request.form.get("local_team_id")

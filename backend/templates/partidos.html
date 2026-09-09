@@ -6,21 +6,57 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <h1>Partidos de Hoy</h1>
-  {% if partidos %}
-    <ul>
-    {% for p in partidos %}
-      <li>
-        {{ p.teams.home.name }} vs {{ p.teams.away.name }} - {{ p.fixture.date }}
-        <form method="POST" action="/predecir">
-          <input type="hidden" name="fixture_id" value="{{ p.fixture.id }}">
-          <button type="submit">Predecir</button>
-        </form>
-      </li>
-    {% endfor %}
-    </ul>
-  {% else %}
-    <p>No hay partidos para hoy.</p>
-  {% endif %}
+  <div class="container">
+    <h1>Partidos de Hoy</h1>
+    <div id="partidos-container">
+      <p>Cargando partidos...</p>
+    </div>
+    <a href="/inicio" style="display:inline-block;margin-top:1rem;color:#007bff;">← Volver</a>
+  </div>
+
+  <script>
+    async function cargarPartidos() {
+      const container = document.getElementById("partidos-container");
+      try {
+        // Get API config from server
+        const configRes = await fetch("/api-config");
+        const config = await configRes.json();
+
+        const hoy = new Date().toISOString().split("T")[0];
+        const res = await fetch(
+          `${config.base_url}/fixtures?date=${hoy}`,
+          { headers: { "x-apisports-key": config.api_key } }
+        );
+        const data = await res.json();
+        const partidos = data.response || [];
+
+        if (partidos.length === 0) {
+          container.innerHTML = "<p>No hay partidos programados para hoy.</p>";
+          return;
+        }
+
+        let html = "<ul>";
+        partidos.forEach(p => {
+          const hora = new Date(p.fixture.date).toLocaleTimeString("es", {hour:"2-digit", minute:"2-digit"});
+          const liga = p.league.name;
+          const home = p.teams.home.name;
+          const away = p.teams.away.name;
+          const estado = p.fixture.status.short;
+          const golesH = p.goals.home !== null ? p.goals.home : "-";
+          const golesA = p.goals.away !== null ? p.goals.away : "-";
+          html += `<li style="margin-bottom:0.8rem;padding:0.5rem;border:1px solid #eee;border-radius:6px;">
+            <strong>${home}</strong> ${golesH} - ${golesA} <strong>${away}</strong>
+            <br><small>${liga} · ${hora} · ${estado}</small>
+          </li>`;
+        });
+        html += "</ul>";
+        container.innerHTML = html;
+      } catch (err) {
+        container.innerHTML = "<p>No se pudieron cargar los partidos. Intenta de nuevo.</p>";
+      }
+    }
+
+    cargarPartidos();
+  </script>
 </body>
 </html>
