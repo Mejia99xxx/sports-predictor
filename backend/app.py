@@ -64,7 +64,7 @@ def proxy_api_football():
     if not path:
         return jsonify({"error": "Missing path parameter"}), 400
 
-    api_key = os.environ.get("API_FOOTBALL_KEY", "3a5f469c7cb18934b76eb4818ed42a9a")
+    api_key = os.environ.get("API_FOOTBALL_KEY", "915da07f30b1fc343b92136b3d89f884")
     url = f"https://v3.football.api-sports.io{path}"
     headers = {"x-apisports-key": api_key}
 

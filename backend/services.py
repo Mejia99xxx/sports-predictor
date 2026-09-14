@@ -9,7 +9,7 @@ BASE_URL = "https://v3.football.api-sports.io"
 
 def _get_headers():
     """Read API key fresh from environment on every call."""
-    api_key = os.environ.get("API_FOOTBALL_KEY", "3a5f469c7cb18934b76eb4818ed42a9a")
+    api_key = os.environ.get("API_FOOTBALL_KEY", "915da07f30b1fc343b92136b3d89f884")
     return {"x-apisports-key": api_key}
 
 
