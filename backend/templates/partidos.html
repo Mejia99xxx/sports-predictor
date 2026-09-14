@@ -18,14 +18,9 @@
     async function cargarPartidos() {
       const container = document.getElementById("partidos-container");
       try {
-        // Get API config from server
-        const configRes = await fetch("/api-config");
-        const config = await configRes.json();
-
         const hoy = new Date().toISOString().split("T")[0];
         const res = await fetch(
-          `${config.base_url}/fixtures?date=${hoy}`,
-          { headers: { "x-apisports-key": config.api_key } }
+          `/proxy/api-football?path=${encodeURIComponent("/fixtures?date=" + hoy)}`
         );
         const data = await res.json();
         const partidos = data.response || [];

@@ -52,6 +52,29 @@ def api_config():
         "base_url": "https://v3.football.api-sports.io"
     })
 
+@app.route("/proxy/api-football")
+def proxy_api_football():
+    """
+    Proxy endpoint: forwards any API-Football request from the frontend.
+    The frontend sends ?path=/fixtures?team=33&season=2024
+    and this proxies it to API-Football server-side (bypassing CORS/IP blocks).
+    """
+    import requests as req
+    path = request.args.get("path", "")
+    if not path:
+        return jsonify({"error": "Missing path parameter"}), 400
+
+    api_key = os.environ.get("API_FOOTBALL_KEY", "3a5f469c7cb18934b76eb4818ed42a9a")
+    url = f"https://v3.football.api-sports.io{path}"
+    headers = {"x-apisports-key": api_key}
+
+    try:
+        resp = req.get(url, headers=headers, timeout=25)
+        return jsonify(resp.json()), resp.status_code
+    except Exception as e:
+        app.logger.error(f"Proxy error for {url}: {e}")
+        return jsonify({"response": [], "error": str(e)}), 200
+
 modelo, scaler = None, None
 try:
     modelo, scaler = cargar_modelo()
@@ -121,6 +144,8 @@ def predecir_vector():
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+@app.route("/predecir/equipos", methods=["POST"])
 def predecir_equipos():
     # 1. Validate required parameters
     local_team_id = request.form.get("local_team_id")
