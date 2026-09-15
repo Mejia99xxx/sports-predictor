@@ -18,7 +18,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   const visitanteNameInput = document.getElementById("visitante_team_name");
   const teamsError        = document.getElementById("team-error");
   const ligaError         = document.getElementById("liga-error");
-  const form              = document.querySelector("form[action='/predecir/equipos']");
+  const infoMsg           = document.getElementById("info-msg");
+  const form              = document.getElementById("predict-form");
 
   if (!ligaSelect) return;
 
@@ -51,8 +52,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     select.disabled = false;
   }
 
-  function showError(el, msg) { if (el) { el.textContent = msg; el.style.display = "block"; } }
-  function hideError(el)      { if (el) { el.textContent = ""; el.style.display = "none"; } }
+  function showError(el, msg) { if (el) { el.textContent = msg; el.classList.add("visible"); } }
+  function hideError(el)      { if (el) { el.textContent = ""; el.classList.remove("visible"); } }
+  function showInfo(msg)      { if (infoMsg) { infoMsg.textContent = msg; infoMsg.classList.add("visible"); } }
+  function hideInfo()         { if (infoMsg) { infoMsg.textContent = ""; infoMsg.classList.remove("visible"); } }
 
   // ── Load leagues from hardcoded server endpoint ─────────────────────────
   async function cargarLigas() {
@@ -161,7 +164,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         return;
       }
 
-      showError(teamsError, "⏳ Obteniendo estadísticas... puede tardar unos segundos.");
+      showInfo("⏳ Obteniendo estadísticas... puede tardar unos segundos.");
+      hideError(teamsError);
 
       try {
         const [statsLocal, statsVisitante] = await Promise.all([
@@ -180,6 +184,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         const vector = buildVector(statsLocal, statsVisitante);
         hideError(teamsError);
+        hideInfo();
 
         const res = await fetch("/predecir/vector", {
           method: "POST",
@@ -194,13 +199,45 @@ document.addEventListener("DOMContentLoaded", async function () {
         const result = await res.json();
         if (result.error) { showError(teamsError, result.error); return; }
 
-        document.body.innerHTML = `
-          <div class="container" style="text-align:center;padding:2rem;">
-            <h1>Resultado del Pronóstico</h1>
-            <p style="font-size:1.1rem;">${result.equipo_local} vs ${result.equipo_visitante}</p>
-            <p>El modelo predice: <strong style="font-size:1.3rem;">${result.resultado}</strong></p>
-            <a href="/inicio" style="display:inline-block;margin-top:1rem;color:#007bff;">← Volver</a>
-          </div>`;
+        // Show result with new design
+        const overlay = document.getElementById("result-overlay");
+        const content = document.getElementById("result-content");
+        if (overlay && content) {
+          const r = result.resultado;
+          let cssClass = "draw";
+          let trophy = "🤝";
+          if (r === "Gana equipo local")    { cssClass = "win-home"; trophy = "🏆"; }
+          if (r === "Gana equipo visitante") { cssClass = "win-away"; trophy = "🏆"; }
+
+          content.innerHTML = `
+            <div class="trophy">${trophy}</div>
+            <div class="teams">
+              <span class="team-name">${result.equipo_local}</span>
+              <span style="color:#aaa;margin:0 0.5rem;">vs</span>
+              <span class="team-name">${result.equipo_visitante}</span>
+            </div>
+            <div class="prediction-box">
+              <div class="prediction-label">El modelo predice</div>
+              <div class="prediction-value ${cssClass}">${r}</div>
+            </div>
+            <a href="/inicio" class="btn-back">← Nueva predicción</a>`;
+
+          overlay.style.display = "flex";
+        } else {
+          document.body.innerHTML = `
+            <div class="container">
+              <div class="card-header"><div class="logo">⚽</div><h1>Pronosticador de Fútbol</h1></div>
+              <div class="result-card">
+                <div class="trophy">🏆</div>
+                <div class="teams"><span class="team-name">${result.equipo_local}</span> vs <span class="team-name">${result.equipo_visitante}</span></div>
+                <div class="prediction-box">
+                  <div class="prediction-label">El modelo predice</div>
+                  <div class="prediction-value">${result.resultado}</div>
+                </div>
+                <a href="/inicio" class="btn-back">← Nueva predicción</a>
+              </div>
+            </div>`;
+        }
 
       } catch (err) {
         showError(teamsError, "Error al procesar la predicción: " + err.message);

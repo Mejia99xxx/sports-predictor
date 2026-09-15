@@ -2,16 +2,19 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Partidos del Día</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <div class="container">
-    <h1>Partidos de Hoy</h1>
+  <div class="partidos-container">
+    <h1 class="page-title">📅 Partidos de Hoy</h1>
     <div id="partidos-container">
-      <p>Cargando partidos...</p>
+      <div class="empty-state">⏳ Cargando partidos...</div>
     </div>
-    <a href="/inicio" style="display:inline-block;margin-top:1rem;color:#007bff;">← Volver</a>
+    <div style="text-align:center; margin-top:1.2rem;">
+      <a href="/inicio" class="btn-back">← Volver</a>
+    </div>
   </div>
 
   <script>
@@ -26,11 +29,11 @@
         const partidos = data.response || [];
 
         if (partidos.length === 0) {
-          container.innerHTML = "<p>No hay partidos programados para hoy.</p>";
+          container.innerHTML = '<div class="empty-state">😴 No hay partidos programados para hoy.</div>';
           return;
         }
 
-        let html = "<ul>";
+        let html = "";
         partidos.forEach(p => {
           const hora = new Date(p.fixture.date).toLocaleTimeString("es", {hour:"2-digit", minute:"2-digit"});
           const liga = p.league.name;
@@ -39,18 +42,22 @@
           const estado = p.fixture.status.short;
           const golesH = p.goals.home !== null ? p.goals.home : "-";
           const golesA = p.goals.away !== null ? p.goals.away : "-";
-          html += `<li style="margin-bottom:0.8rem;padding:0.5rem;border:1px solid #eee;border-radius:6px;">
-            <strong>${home}</strong> ${golesH} - ${golesA} <strong>${away}</strong>
-            <br><small>${liga} · ${hora} · ${estado}</small>
-          </li>`;
+          const isLive = ["1H","HT","2H","ET","P"].includes(estado);
+
+          html += `
+          <div class="partido-card">
+            <div>
+              <div class="partido-teams">${home} <span style="color:#aaa;font-weight:400">vs</span> ${away}</div>
+              <div class="partido-meta">${liga} · ${hora}${isLive ? ' · <span style="color:#16a34a;font-weight:600">EN VIVO</span>' : ''}</div>
+            </div>
+            <div class="partido-score">${golesH} - ${golesA}</div>
+          </div>`;
         });
-        html += "</ul>";
         container.innerHTML = html;
       } catch (err) {
-        container.innerHTML = "<p>No se pudieron cargar los partidos. Intenta de nuevo.</p>";
+        container.innerHTML = '<div class="empty-state">❌ No se pudieron cargar los partidos.</div>';
       }
     }
-
     cargarPartidos();
   </script>
 </body>

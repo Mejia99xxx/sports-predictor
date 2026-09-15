@@ -2,74 +2,65 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Pronosticador de Futbol</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pronosticador de Fútbol</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-  <style>
-    select {
-      padding: 0.5rem;
-      margin-top: 0.3rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      width: 100%;
-      font-size: 0.95rem;
-    }
-    select:disabled {
-      background-color: #f0f0f0;
-      color: #999;
-      cursor: not-allowed;
-    }
-    .nav-link {
-      display: inline-block;
-      margin-top: 1rem;
-      color: #007bff;
-      text-decoration: none;
-      font-size: 0.9rem;
-    }
-    .nav-link:hover { text-decoration: underline; }
-    .error-message {
-      color: #c0392b;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-    }
-    #team-error, #liga-error {
-      color: #c0392b;
-      font-size: 0.85rem;
-      margin-top: 0.3rem;
-      display: none;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
-    <h1>Pronosticador de Futbol</h1>
+    <div class="card-header">
+      <div class="logo">⚽</div>
+      <h1>Pronosticador de Fútbol</h1>
+      <p class="subtitle">Predicciones basadas en estadísticas reales</p>
+    </div>
 
-    <p id="liga-error" class="error-message"></p>
+    <div class="card-body">
+      <div id="liga-error" class="error-msg"></div>
+      <div id="team-error" class="error-msg"></div>
+      <div id="info-msg" class="info-msg"></div>
 
-    <form method="POST" action="/predecir/equipos">
-      <input type="hidden" name="local_team_name" id="local_team_name" value="">
-      <input type="hidden" name="visitante_team_name" id="visitante_team_name" value="">
+      <form id="predict-form">
+        <input type="hidden" name="local_team_name" id="local_team_name" value="">
+        <input type="hidden" name="visitante_team_name" id="visitante_team_name" value="">
 
-      <label for="liga_id">Liga:</label>
-      <select id="liga_id" name="liga_id" disabled>
-        <option value="">Cargando ligas...</option>
-      </select>
+        <div class="form-group">
+          <label for="liga_id">🏆 Liga / Competición</label>
+          <select id="liga_id" name="liga_id" disabled>
+            <option value="">Cargando ligas...</option>
+          </select>
+        </div>
 
-      <div id="team-error"></div>
+        <div class="form-group">
+          <label for="local_team_id">🏠 Equipo Local</label>
+          <select id="local_team_id" name="local_team_id" disabled>
+            <option value="">— Selecciona una liga primero —</option>
+          </select>
+        </div>
 
-      <label for="local_team_id">Equipo Local:</label>
-      <select id="local_team_id" name="local_team_id" disabled>
-        <option value="">-- Selecciona una liga primero --</option>
-      </select>
+        <div class="vs-divider">VS</div>
 
-      <label for="visitante_team_id">Equipo Visitante:</label>
-      <select id="visitante_team_id" name="visitante_team_id" disabled>
-        <option value="">-- Selecciona una liga primero --</option>
-      </select>
+        <div class="form-group">
+          <label for="visitante_team_id">✈️ Equipo Visitante</label>
+          <select id="visitante_team_id" name="visitante_team_id" disabled>
+            <option value="">— Selecciona una liga primero —</option>
+          </select>
+        </div>
 
-      <button type="submit">Predecir</button>
-    </form>
+        <button type="submit" class="btn-predict">⚡ Predecir resultado</button>
+      </form>
 
-    <a class="nav-link" href="/partidos">Ver partidos del dia</a>
+      <a class="nav-link" href="/partidos">📅 Ver partidos del día</a>
+    </div>
+  </div>
+
+  <div id="result-overlay" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg,#0f2027,#203a43,#2c5364); display:none; align-items:center; justify-content:center; padding:1.5rem;">
+    <div class="container">
+      <div class="card-header">
+        <div class="logo">⚽</div>
+        <h1>Pronosticador de Fútbol</h1>
+      </div>
+      <div id="result-content" class="result-card"></div>
+    </div>
   </div>
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
