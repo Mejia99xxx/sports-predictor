@@ -137,6 +137,25 @@ def predecir_vector():
 
     try:
         resultado = predecir_modelo(modelo, scaler, vector)
+
+        # Save to history
+        try:
+            from models import Pronostico
+            pred = Pronostico(
+                equipo_local=equipo_local,
+                equipo_visitante=equipo_visitante,
+                liga=data.get("liga", ""),
+                resultado=resultado,
+                posesion_local=vector[0] if len(vector) > 0 else 0,
+                posesion_visitante=vector[1] if len(vector) > 1 else 0,
+                tiros_local=int(vector[2]) if len(vector) > 2 else 0,
+                tiros_visitante=int(vector[3]) if len(vector) > 3 else 0,
+            )
+            db.session.add(pred)
+            db.session.commit()
+        except Exception as db_err:
+            app.logger.warning(f"Could not save prediction to DB: {db_err}")
+
         return jsonify({
             "resultado": resultado,
             "equipo_local": equipo_local,
@@ -510,6 +529,12 @@ def pronostico():
     equipo1_id = request.args.get('equipo1_id')
     equipo2_id = request.args.get('equipo2_id')
     return jsonify({"message": "Funcionalidad de pronóstico personalizada no implementada aún."})
+
+@app.route('/historial')
+def historial():
+    from models import Pronostico
+    registros = Pronostico.query.order_by(Pronostico.fecha.desc()).limit(50).all()
+    return render_template("historial.html", registros=registros)
 
 # =============================
 # 🤖 Ruta del modelo de ML

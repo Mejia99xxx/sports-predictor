@@ -42,6 +42,11 @@ class EstadisticaPartido(db.Model):
 class Pronostico(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     fecha = db.Column(db.DateTime, default=datetime.utcnow)
-    metodo = db.Column(db.String(50))  # 'ML' o 'API'
-    datos_entrada = db.Column(db.Text)
-    resultado = db.Column(db.String(100))
+    equipo_local = db.Column(db.String(100), nullable=False, default='')
+    equipo_visitante = db.Column(db.String(100), nullable=False, default='')
+    liga = db.Column(db.String(100), nullable=False, default='')
+    resultado = db.Column(db.String(100), nullable=False)
+    posesion_local = db.Column(db.Float, default=0)
+    posesion_visitante = db.Column(db.Float, default=0)
+    tiros_local = db.Column(db.Integer, default=0)
+    tiros_visitante = db.Column(db.Integer, default=0)
